@@ -65,8 +65,9 @@ console.log(driverId,"driverId")
   console.log("requested id>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", requestId)
   const driverEmail = await getUserEmail(driverId);
 
-  const acceptLink = `http://yourdomain.com/api/ride-requests/${requestId}/accept`;
-  const rejectLink = `http://yourdomain.com/api/ride-requests/${requestId}/reject`;
+  const acceptLink = ` https://mhima-sharma.github.io/Weather-App/api/ride-requests/${requestId}/accept`;
+  const rejectLink = ` https://mhima-sharma.github.io/Weather-App/api/ride-requests/${requestId}/reject`;
+
 
   // await sendEmail({
   //   to: driverEmail,
