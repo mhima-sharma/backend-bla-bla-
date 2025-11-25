@@ -1,5 +1,5 @@
 // const db = require('../config/db');
-
+const db = require('../config/db');
 exports.publishRide = async (req, res) => {console.log(req.user,"reqqqqqqqqqqqqqqqq")
   try {
     const userId = req.user.id;
@@ -36,13 +36,10 @@ exports.getPublishedRides = async (req, res) => {
 
 
 // yha se hum ride ko search kre ge! yaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-
-const db = require('../config/db');
-
 exports.searchRides = async (req, res) => {
-  const { from, to } = req.query;
+  const { from, to, date } = req.query;
 
-  let query = 'SELECT * FROM ride_publish_details WHERE 1=1';
+  let query = 'SELECT * FROM ride_publish_details WHERE date >= CURDATE()';
   const params = [];
 
   if (from) {
@@ -53,6 +50,12 @@ exports.searchRides = async (req, res) => {
   if (to) {
     query += ' AND to_location LIKE ?';
     params.push(`%${to}%`);
+  }
+
+  // ✅ Filter exact date if provided
+  if (date) {
+    query += ' AND DATE(date) = ?';
+    params.push(date);
   }
 
   try {
