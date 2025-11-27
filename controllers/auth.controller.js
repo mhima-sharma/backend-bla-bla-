@@ -141,28 +141,48 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// ======= forgot password reovery 
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ message: 'Email is required' });
 
   try {
-    // Check if user exists
+    // 1️⃣ Check if user exists
     const [user] = await db.query('SELECT * FROM signup_users WHERE email = ?', [email]);
     if (!user.length) return res.status(404).json({ message: 'Email not found' });
 
-    // Generate token (1 hour expiry)
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    // 2️⃣ Generate reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
 
-    // Save token in DB
-    await passwordResetModel.saveToken(email, token);
+    // 3️⃣ Save token + expiry in DB
+    const expiry = Date.now() + parseInt(process.env.RESET_TOKEN_EXPIRY_MS || 3600000); // default 1 hour
+    await db.query(
+      'UPDATE signup_users SET resetToken = ?, resetTokenExpiry = ? WHERE email = ?',
+      [resetToken, expiry, email]
+    );
 
-    // Here you send email with link (example)
-    console.log(`Reset link: ${process.env.FRONTEND_URL}/reset-password?token=${token}`);
+    // 4️⃣ Send reset email
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      secure: false,
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS
+      }
+    });
+
+    const resetURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    await transporter.sendMail({
+      from: process.env.MAIL_USER,
+      to: email,
+      subject: 'Password Reset',
+      html: `<p>Click <a href="${resetURL}">here</a> to reset your password</p>`
+    });
 
     res.json({ message: 'Reset link sent to your email' });
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
