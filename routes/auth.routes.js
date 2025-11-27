@@ -13,9 +13,10 @@ router.post('/change-password', authenticateToken, authController.changePassword
 router.get('/user/profile', authenticateToken, authController.getUserProfile);
 router.get('/user/updated/profile', authenticateToken, authController.getUserUpdatedProfile); 
 router.put('/profile', authenticateToken, authController.updateProfile);
+router.post('/forgot-password', authController.forgotPassword);
 // router.post('/reset-password', authController.resetPassword);
 
-router.post('/forgot-password', authController.forgotPassword);
-router.post('/reset-password', authController.resetPassword);
+// router.post('/forgot-password', authController.forgotPassword);
+// router.post('/reset-password', authController.resetPassword);
 
 module.exports = router;
