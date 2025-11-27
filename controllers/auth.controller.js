@@ -4,6 +4,9 @@ const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db')
 const passwordResetModel = require('../models/passwordreset.model');
+const crypto = require('crypto'); // Node.js module
+const nodemailer = require('nodemailer');
+
 // ===== SIGNUP =====
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -141,26 +144,24 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-exports.forgotPassword = async (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ message: 'Email is required' });
 
+
+exports.forgotPassword = async (req, res) => {
   try {
-    // 1️⃣ Check if user exists
+    const { email } = req.body;
+
     const [user] = await db.query('SELECT * FROM signup_users WHERE email = ?', [email]);
     if (!user.length) return res.status(404).json({ message: 'Email not found' });
 
-    // 2️⃣ Generate reset token
+    // Node.js crypto
     const resetToken = crypto.randomBytes(32).toString('hex');
 
-    // 3️⃣ Save token + expiry in DB
-    const expiry = Date.now() + parseInt(process.env.RESET_TOKEN_EXPIRY_MS || 3600000); // default 1 hour
+    const expiry = Date.now() + 3600000; // 1 hour
     await db.query(
       'UPDATE signup_users SET resetToken = ?, resetTokenExpiry = ? WHERE email = ?',
       [resetToken, expiry, email]
     );
 
-    // 4️⃣ Send reset email
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
