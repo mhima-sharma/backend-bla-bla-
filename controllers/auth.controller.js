@@ -148,7 +148,7 @@ exports.forgotPassword = async (req, res) => {
 
   try {
     // Check if user exists
-    const [user] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    const [user] = await db.query('SELECT * FROM signup_users WHERE email = ?', [email]);
     if (!user.length) return res.status(404).json({ message: 'Email not found' });
 
     // Generate token (1 hour expiry)
