@@ -15,6 +15,8 @@ const rideRequest = require('./routes/rideRoutes');
 // ride request ke liye 
 const rideRequestRoutes = require("./routes/rideRequestRoutes");
 
+const bookingRoutes = require('./routes/bookingRoutes');
+
 
 
 // const rideRoutes = require('./routes/publishride.routes');
@@ -39,6 +41,7 @@ app.use('/api/rides', publishRideRoutes);
 app.use('/api', rideRequest);
 // app.use("/api/rides", rideRequestRoutes); //ride request ke liye testing 
 app.use('/api/ride-requests', rideRequestRoutes);
+app.use('/api/bookings', bookingRoutes);
 // Optional: basic health check endpoint
 app.get('/', (req, res) => {
   res.send('API is running...');
