@@ -42,6 +42,13 @@ app.use('/api', rideRequest);
 // app.use("/api/rides", rideRequestRoutes); //ride request ke liye testing 
 app.use('/api/ride-requests', rideRequestRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/bookings/update-status', bookingRoutes);
+app.use('/api/rides', bookingRoutes);
+
+app.use('/rider/:riderId', bookingRoutes);
+app.use('/driver/:driverId', bookingRoutes);
+app.use('/:bookingId', bookingRoutes);
+
 // Optional: basic health check endpoint
 app.get('/', (req, res) => {
   res.send('API is running...');
