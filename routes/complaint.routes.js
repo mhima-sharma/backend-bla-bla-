@@ -2,10 +2,12 @@ const express = require('express');
 const router = express.Router();
 const ComplaintController = require('../controllers/complaint.controller');
 
-// POST - submit a complaint
+// USER
 router.post('/send-message', ComplaintController.sendComplaint);
 
-// GET - fetch all complaints (for admin)
+// ADMIN
 router.get('/get-complaints', ComplaintController.getComplaints);
+router.put('/update-status/:id', ComplaintController.updateComplaintStatus);
+
 
 module.exports = router;
